@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Promodoro Timer</title>
+	<link rel="stylesheet" type="text/css" href="./style.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+</head>
+<body>
+<ul class="navigation">
+	<li class="logo"><p>Promodoro Timer</p></li>
+	<li class="settings"><i class="fas fa-cog"></i>
+</li>
+</ul>
+
+<div class="main">
+	<div class="session">
+		<h6 style="font-weight: 100;">Work Session</h6>
+		<p class="timer worktimer">25:00</p>
+	</div>
+	<div class="session session-right">
+		<h6 style="font-weight: 100;">Break Session</h6>
+		<p class="timer breaktimer">05:00</p>
+	</div>
+</div>
+<div class="actions">
+		<button id="start"><i class="fas fa-play"></i></button>
+		<button id="reload"><i class="fas fa-redo-alt"></i></button>
+</div>
+<div class="modal">
+	<div class="modal-content">
+		<span class="close">&times;</span>
+
+		<h3>Timer Settings</h3>
+		<hr>
+		<label>Set Work Time</label>
+		<input class="workTime" type="" name="">
+		<br>
+		<label>Set Break Time</label>
+		<input class="breakTime" type="" name="">
+		<br>
+		<button class="save">Save</button>
+	</div>
+</div>
+<div class="footer">
+	<p>Coded by<a href="">  Huong</a></p>
+</div>
+</body>
+<script type="text/javascript">
+	var settingButton = document.querySelector('.settings');
+	var closeButton = document.querySelector('.close');
+	var modal = document.querySelector('.modal');
+	var buttonSave = document.querySelector('.save');
+	var workSession = localStorage.getItem('workTime') ? localStorage.getItem('workTime') : 25*60;
+	var breakSession = localStorage.getItem('breakTime') ? localStorage.getItem('breakTime') : 5*60;
+
+	var workTimer = document.querySelector('.worktimer');
+	var breakTimer = document.querySelector('.breaktimer');
+
+	var buttonReload = document.querySelector('#reload')
+	var buttonStart = document.querySelector('#start')
+	var audio = new Audio('./audio/alarm.mp3');
+
+
+	workTimer.textContent = formatMinuteAndSecond(workSession);
+	breakTimer.textContent = formatMinuteAndSecond(breakSession);	
+
+	settingButton.addEventListener('click', function(){
+		modal.style.display = 'block';
+		document.querySelector('.workTime').value = localStorage.getItem('workTime') ? localStorage.getItem('workTime') /60 : 25;;
+		document.querySelector('.breakTime').value = localStorage.getItem('breakTime') ? localStorage.getItem('breakTime') /60 : 5*60;
+	})
+	closeButton.addEventListener('click', function (){
+		modal.style.display = 'none';
+	})
+
+	buttonSave.addEventListener('click', function () {
+		var workTime = document.querySelector('.workTime').value;
+		var breakTime = document.querySelector('.breakTime').value;
+		if (workTime < 1 || breakTime < 1) {
+			alert("Error: workTime and breakTime must more than 1")
+		} else {
+			localStorage.setItem('workTime', parseInt(workTime)*60);
+			localStorage.setItem('breakTime', parseInt(breakTime)*60);
+			resetTimer();
+			modal.style.display = 'none';
+		}
+		
+	})
+
+
+	buttonStart.addEventListener('click', function () {
+		setInterval(function () {
+			if (workSession > 0) {
+				workSession--;
+				workTimer.textContent = formatMinuteAndSecond(workSession);
+				if (workSession == 1) {
+					setTimeout(function () {
+						audio.play();
+					}, 1000)
+				}
+			} else {
+				
+				if (breakSession > 0) {
+					breakSession--;
+					breakTimer.textContent = formatMinuteAndSecond(breakSession);
+					if (breakSession == 1) {
+						setTimeout(function () {
+							audio.play();
+						}, 1000);
+					}
+				} 
+				else {
+					audio.play();
+					resetTimer();
+				}
+			}
+		}, 1000)
+	})
+	
+
+	buttonReload.addEventListener('click',resetTimer)
+
+	//format 25:00 or 05:00
+	function formatMinuteAndSecond(num){
+		return parseInt(num/60)+":"+(num%60 < 10 ? "0" + num%60 : num%60);
+	}
+
+	function resetTimer() {
+		workSession = localStorage.getItem('workTime') ? localStorage.getItem('workTime') : 25*60;
+		breakSession = localStorage.getItem('breakTime') ? localStorage.getItem('breakTime') : 5*60;
+
+		workTimer.textContent = formatMinuteAndSecond(workSession);
+		breakTimer.textContent = formatMinuteAndSecond(breakSession);	
+	} 
+</script>
+</html>
