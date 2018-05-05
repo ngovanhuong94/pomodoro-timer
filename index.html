@@ -67,7 +67,7 @@
 	settingButton.addEventListener('click', function(){
 		modal.style.display = 'block';
 		document.querySelector('.workTime').value = localStorage.getItem('workTime') ? localStorage.getItem('workTime') /60 : 25;;
-		document.querySelector('.breakTime').value = localStorage.getItem('breakTime') ? localStorage.getItem('breakTime') /60 : 5*60;
+		document.querySelector('.breakTime').value = localStorage.getItem('breakTime') ? localStorage.getItem('breakTime') /60 : 5;
 	})
 	closeButton.addEventListener('click', function (){
 		modal.style.display = 'none';
